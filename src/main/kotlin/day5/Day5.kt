@@ -1,11 +1,6 @@
 package day5
 
-fun parseFromString() {
-
-}
-
-
-class MNot(
+class Notation(
     private val valueStart: Long,
     private val indexStart: Long,
     private val rangeSize: Long,
@@ -23,7 +18,7 @@ class MNot(
 }
 
 data class MapNotation(
-    val notations: List<MNot>
+    val notations: List<Notation>
 ) {
 
     fun findFor(v: Long): Long {
@@ -43,7 +38,7 @@ data class MapNotation(
 
             val result = regex.find(input)?.groupValues?.get(1)?.split("\n")?.filter { it.isNotBlank() }?.map {
                 val (valueStart, indexStart, rangeSize) = it.split(" ").map { it.toLong() }
-                MNot(valueStart, indexStart, rangeSize)
+                Notation(valueStart, indexStart, rangeSize)
             } ?: throw Error("Could not parse $label map from input")
 
             return MapNotation(result)
@@ -62,6 +57,10 @@ data class Input(
     val temperatureToHumidity: MapNotation,
     val humidityToLocation: MapNotation,
 ) {
+
+    fun findMinLocation(): Long {
+        return seeds.map { findLocationForSeed(it) }.min()
+    }
 
     fun findLocationForSeed(seed: Long): Long {
         return findEach(seed).last()
@@ -137,15 +136,18 @@ fun areEqual(a: String, b: String): Boolean {
 
 fun main() {
     val text = ClassLoader.getSystemResource("day5/example-input.txt").readText()
-    val seeds = listOf<Long>(79, 14, 55, 13)
     val input = Input.parse(text)
 
-    println(areEqual(text,input.toString()))
-    println("=============================================================")
-    println(text.replace(Regex("""\s"""), ""))
-    println("=============================================================")
-    println(input.toString().replace(Regex("""\s"""), ""))
-    println("=============================================================")
-//    println(seeds.map { input.findLocationForSeed(it) })
-//    println(seeds.minBy { input.findLocationForSeed(it) })
+    println(areEqual(text, input.toString()))
+    println("Part one Result: ${input.findMinLocation()}")
+
+    val partTwoResult = input.copy(
+        seeds = input.seeds
+            .chunked(2)
+            .flatMap {
+                val (a, b) = it
+                (a..<(a+b))
+            }
+    )
+    println("Part two Result: ${partTwoResult.findMinLocation()}")
 }
