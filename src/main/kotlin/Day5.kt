@@ -156,7 +156,8 @@ temperature-to-humidity map:
 
 humidity-to-location map:
 60 56 37
-56 93 4""".trimIndent()
+56 93 4
+"""
 
 
 fun areEqual(a:String, b:String): Boolean {
@@ -165,9 +166,12 @@ fun areEqual(a:String, b:String): Boolean {
 fun main() {
     val seeds = listOf<Long>(79, 14, 55, 13)
     val input = Input.parse(given)
-//    println(given)
-//    println("=============================================================")
     println(areEqual(given, input.toString()))
-    println(seeds.map { input.findLocationForSeed(it) })
+//    println("=============================================================")
+//    println(given.replace(Regex("""\s"""), ""))
+//    println("=============================================================")
+//    println(input.toString().replace(Regex("""\s"""), ""))
+//    println("=============================================================")
+//    println(seeds.map { input.findLocationForSeed(it) })
 //    println(seeds.minBy { input.findLocationForSeed(it) })
 }
