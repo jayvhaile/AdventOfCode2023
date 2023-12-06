@@ -37,13 +37,16 @@ data class MapNotation(
 
     companion object {
         fun parseNotation(input: String, label: String): MapNotation {
-            val regex = Regex("""$label map:\n(\d+) (\d+) (\d+)\n(\d+) (\d+) (\d+)""")
-            val result = regex.matchAt(input, input.indexOf(label))
-                ?.groupValues
-                ?.mapNotNull { it.toLongOrNull() }
-                ?.chunked(3)
-                ?.map { MNot(it[0], it[1], it[2]) }
-                ?: throw Error("Could not parse $label")
+            val regex = Regex("""$label map:\n((?:\d+ \d+ \d+\n)+)""")
+
+            val result = regex.find(input)?.groupValues?.get(1)
+                ?.split("\n")
+                ?.filter { it.isNotBlank() }
+                ?.map {
+                    val (valueStart, indexStart, rangeSize) = it.split(" ").map { it.toLong() }
+                    MNot(valueStart, indexStart, rangeSize)
+                } ?: throw Error("Could not parse $label map from input")
+
             return MapNotation(result)
         }
     }
@@ -84,7 +87,6 @@ soil-to-fertilizer map:
 $soilToFertilizer
 
 fertilizer-to-water map:
-
 $fertilizerToWater
 
 water-to-light map:
@@ -157,12 +159,15 @@ humidity-to-location map:
 56 93 4""".trimIndent()
 
 
+fun areEqual(a:String, b:String): Boolean {
+    return a.replace(Regex("""\s"""), "") == b.replace(Regex("""\s"""), "")
+}
 fun main() {
     val seeds = listOf<Long>(79, 14, 55, 13)
     val input = Input.parse(given)
-    println(given)
-    println("=============================================================")
-    println(input.toString())
-//    println(seeds.map { input.findLocationForSeed(it) })
+//    println(given)
+//    println("=============================================================")
+    println(areEqual(given, input.toString()))
+    println(seeds.map { input.findLocationForSeed(it) })
 //    println(seeds.minBy { input.findLocationForSeed(it) })
 }
