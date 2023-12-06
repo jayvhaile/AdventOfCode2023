@@ -147,7 +147,7 @@ fun main() {
 
     val seeds = input.seeds
 
-    seeds
+    val res=seeds
         .chunked(2)
         .parallelStream()
         .map {
@@ -167,25 +167,7 @@ fun main() {
         }
         .toList()
         .min()
-    var min = Long.MAX_VALUE
-    while (index < seeds.size - 1) {
-        val start = seeds[index]
-        val range = seeds[index + 1]
 
-        println("start: $start, range: $range")
-        var rangeIndex = 0
-
-
-        while (rangeIndex < range) {
-            val seed = start + rangeIndex
-            val location = input.findLocationForSeed(seed)
-            if (location < min) {
-                min = location
-            }
-            rangeIndex++
-        }
-        index+=2
-    }
-    println("Part two result: $min")
+    println("Part two result: $res")
 
 }
