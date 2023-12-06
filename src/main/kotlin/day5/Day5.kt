@@ -143,22 +143,48 @@ fun main() {
 
     var index = 0
 
+
+
     val seeds = input.seeds
-    var min=0
-    while (index < input.seeds.size - 1) {
+
+    seeds
+        .chunked(2)
+        .parallelStream()
+        .map {
+            val start = it[0]
+            val range = it[1]
+            var rangeIndex = 0
+            var min = Long.MAX_VALUE
+            while (rangeIndex < range) {
+                val seed = start + rangeIndex
+                val location = input.findLocationForSeed(seed)
+                if (location < min) {
+                    min = location
+                }
+                rangeIndex++
+            }
+            min
+        }
+        .toList()
+        .min()
+    var min = Long.MAX_VALUE
+    while (index < seeds.size - 1) {
         val start = seeds[index]
         val range = seeds[index + 1]
-        val end = start + range
-        var seed = start
 
-        while (seed < end) {
+        println("start: $start, range: $range")
+        var rangeIndex = 0
+
+
+        while (rangeIndex < range) {
+            val seed = start + rangeIndex
             val location = input.findLocationForSeed(seed)
             if (location < min) {
-                min = location.toInt()
+                min = location
             }
-            seed++
+            rangeIndex++
         }
-        index++
+        index+=2
     }
     println("Part two result: $min")
 
