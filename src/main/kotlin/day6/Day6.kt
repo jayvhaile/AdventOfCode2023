@@ -1,3 +1,5 @@
+package day6
+
 fun getDistanceTravelled(heldTime: Long, totalTime: Long): Long {
     val remainingTime = totalTime - heldTime
     if (remainingTime < 0) throw Error("Held time is longer than total time!")

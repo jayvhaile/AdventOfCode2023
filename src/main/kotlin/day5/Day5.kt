@@ -138,16 +138,11 @@ fun main() {
     val text = ClassLoader.getSystemResource("day5/main-input.txt").readText()
     val input = Input.parse(text)
 
-    println(areEqual(text, input.toString()))
+    if (!areEqual(text, input.toString())) throw Error("Input parsing failed")
+
     println("Part one Result: ${input.findMinLocation()}")
 
-    var index = 0
-
-
-
-    val seeds = input.seeds
-
-    val res=seeds
+    val res = input.seeds
         .chunked(2)
         .parallelStream()
         .map {
