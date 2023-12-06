@@ -39,12 +39,12 @@ data class MapNotation(
 
     companion object {
         fun parseNotation(input: String, label: String): MapNotation {
-            val regex = Regex("""$label map:\n((?:\d+ \d+ \d+\n)+)""")
+            val regex = Regex("""$label map:\n((?:\d+ \d+ \d+\n?)+)""")
 
             val result = regex.find(input)?.groupValues?.get(1)?.split("\n")?.filter { it.isNotBlank() }?.map {
-                    val (valueStart, indexStart, rangeSize) = it.split(" ").map { it.toLong() }
-                    MNot(valueStart, indexStart, rangeSize)
-                } ?: throw Error("Could not parse $label map from input")
+                val (valueStart, indexStart, rangeSize) = it.split(" ").map { it.toLong() }
+                MNot(valueStart, indexStart, rangeSize)
+            } ?: throw Error("Could not parse $label map from input")
 
             return MapNotation(result)
         }
@@ -107,7 +107,7 @@ $humidityToLocation""".trimIndent()
 
     companion object {
         fun parse(input: String): Input {
-            val seeds = input.split("\n")[0].split(" ").map { it.toLong() }
+            val seeds = input.split("\n")[0].split(" ").mapNotNull { it.toLongOrNull() }
             val seedToSoil = MapNotation.parseNotation(input, "seed-to-soil")
             val soilToFertilizer = MapNotation.parseNotation(input, "soil-to-fertilizer")
             val fertilizerToWater = MapNotation.parseNotation(input, "fertilizer-to-water")
@@ -136,14 +136,16 @@ fun areEqual(a: String, b: String): Boolean {
 }
 
 fun main() {
+    val text = ClassLoader.getSystemResource("day5/example-input.txt").readText()
     val seeds = listOf<Long>(79, 14, 55, 13)
-    val input = Input.parse(givenInput)
-    println(areEqual(givenInput, input.toString()))
-//    println("=============================================================")
-//    println(given.replace(Regex("""\s"""), ""))
-//    println("=============================================================")
-//    println(input.toString().replace(Regex("""\s"""), ""))
-//    println("=============================================================")
+    val input = Input.parse(text)
+
+    println(areEqual(text,input.toString()))
+    println("=============================================================")
+    println(text.replace(Regex("""\s"""), ""))
+    println("=============================================================")
+    println(input.toString().replace(Regex("""\s"""), ""))
+    println("=============================================================")
 //    println(seeds.map { input.findLocationForSeed(it) })
 //    println(seeds.minBy { input.findLocationForSeed(it) })
 }
