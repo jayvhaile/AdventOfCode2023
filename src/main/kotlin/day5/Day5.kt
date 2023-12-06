@@ -1,3 +1,5 @@
+package day5
+
 fun parseFromString() {
 
 }
@@ -39,10 +41,7 @@ data class MapNotation(
         fun parseNotation(input: String, label: String): MapNotation {
             val regex = Regex("""$label map:\n((?:\d+ \d+ \d+\n)+)""")
 
-            val result = regex.find(input)?.groupValues?.get(1)
-                ?.split("\n")
-                ?.filter { it.isNotBlank() }
-                ?.map {
+            val result = regex.find(input)?.groupValues?.get(1)?.split("\n")?.filter { it.isNotBlank() }?.map {
                     val (valueStart, indexStart, rangeSize) = it.split(" ").map { it.toLong() }
                     MNot(valueStart, indexStart, rangeSize)
                 } ?: throw Error("Could not parse $label map from input")
@@ -54,6 +53,7 @@ data class MapNotation(
 
 
 data class Input(
+    val seeds: List<Long>,
     val seedToSoil: MapNotation,
     val soilToFertilizer: MapNotation,
     val fertilizerToWater: MapNotation,
@@ -80,7 +80,9 @@ data class Input(
     }
 
     override fun toString(): String {
-        return """seed-to-soil map:
+        return """seeds: ${seeds.joinToString(" ")}
+
+seed-to-soil map:
 $seedToSoil
             
 soil-to-fertilizer map:
@@ -105,6 +107,7 @@ $humidityToLocation""".trimIndent()
 
     companion object {
         fun parse(input: String): Input {
+            val seeds = input.split("\n")[0].split(" ").map { it.toLong() }
             val seedToSoil = MapNotation.parseNotation(input, "seed-to-soil")
             val soilToFertilizer = MapNotation.parseNotation(input, "soil-to-fertilizer")
             val fertilizerToWater = MapNotation.parseNotation(input, "fertilizer-to-water")
@@ -113,6 +116,7 @@ $humidityToLocation""".trimIndent()
             val temperatureToHumidity = MapNotation.parseNotation(input, "temperature-to-humidity")
             val humidityToLocation = MapNotation.parseNotation(input, "humidity-to-location")
             return Input(
+                seeds,
                 seedToSoil,
                 soilToFertilizer,
                 fertilizerToWater,
@@ -126,47 +130,15 @@ $humidityToLocation""".trimIndent()
 
 }
 
-val given = """seed-to-soil map:
-50 98 2
-52 50 48
 
-soil-to-fertilizer map:
-0 15 37
-37 52 2
-39 0 15
-
-fertilizer-to-water map:
-49 53 8
-0 11 42
-42 0 7
-57 7 4
-
-water-to-light map:
-88 18 7
-18 25 70
-
-light-to-temperature map:
-45 77 23
-81 45 19
-68 64 13
-
-temperature-to-humidity map:
-0 69 1
-1 0 69
-
-humidity-to-location map:
-60 56 37
-56 93 4
-"""
-
-
-fun areEqual(a:String, b:String): Boolean {
+fun areEqual(a: String, b: String): Boolean {
     return a.replace(Regex("""\s"""), "") == b.replace(Regex("""\s"""), "")
 }
+
 fun main() {
     val seeds = listOf<Long>(79, 14, 55, 13)
-    val input = Input.parse(given)
-    println(areEqual(given, input.toString()))
+    val input = Input.parse(givenInput)
+    println(areEqual(givenInput, input.toString()))
 //    println("=============================================================")
 //    println(given.replace(Regex("""\s"""), ""))
 //    println("=============================================================")
