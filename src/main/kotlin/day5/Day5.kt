@@ -59,7 +59,7 @@ data class Input(
 ) {
 
     fun findMinLocation(): Long {
-        return seeds.map { findLocationForSeed(it) }.min()
+        return seeds.minOf { findLocationForSeed(it) }
     }
 
     fun findLocationForSeed(seed: Long): Long {
@@ -135,19 +135,31 @@ fun areEqual(a: String, b: String): Boolean {
 }
 
 fun main() {
-    val text = ClassLoader.getSystemResource("day5/example-input.txt").readText()
+    val text = ClassLoader.getSystemResource("day5/main-input.txt").readText()
     val input = Input.parse(text)
 
     println(areEqual(text, input.toString()))
     println("Part one Result: ${input.findMinLocation()}")
 
-    val partTwoResult = input.copy(
-        seeds = input.seeds
-            .chunked(2)
-            .flatMap {
-                val (a, b) = it
-                (a..<(a+b))
+    var index = 0
+
+    val seeds = input.seeds
+    var min=0
+    while (index < input.seeds.size - 1) {
+        val start = seeds[index]
+        val range = seeds[index + 1]
+        val end = start + range
+        var seed = start
+
+        while (seed < end) {
+            val location = input.findLocationForSeed(seed)
+            if (location < min) {
+                min = location.toInt()
             }
-    )
-    println("Part two Result: ${partTwoResult.findMinLocation()}")
+            seed++
+        }
+        index++
+    }
+    println("Part two result: $min")
+
 }
